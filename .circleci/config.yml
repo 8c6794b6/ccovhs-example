@@ -10,12 +10,8 @@ jobs:
           name: Restore cached dependencies
           keys:
             - ccovhs-example-{{ checksum "ccovhs-example.cabal" }}
-      - run:
-          name: Resolve/update dependencies
-          command: stack setup
-      - run:
-          name: Run tests
-          command: stack build --no-terminal --fast --test --coverage
+      - run: stack setup
+      - run: stack build --no-terminal --fast --test --coverage
       - run:
           name: Install codecov-haskell
           command: |
