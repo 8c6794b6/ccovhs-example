@@ -10,5 +10,5 @@ main =
       f2 = fibB 10
       f3 = fibC 10
   in  if all ((55 ==) . ($ 10)) [fibA, fibB, fibC]
-         then exitSuccess
-         else exitFailure
+         then greetWhenEven 43 >> f_D_3 42 >> exitSuccess
+         else f_D_1 0 >> exitFailure

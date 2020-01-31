@@ -1,15 +1,39 @@
-language: haskell
-ghc: 8.8.2
-cabal: "3.0"
+language: c
+
+os: linux
+
+git:
+  depth: 3
+
+cache:
+  directories:
+    - $HOME/.cabal/packages
+    - $HOME/.cabal/store
+
+jobs:
+  include:
+    - addons:
+        apt: {sources: [hvr-ghc], packages: [cabal-install-3.0,ghc-8.8.2]}
 
 install:
-  - cabal v2-configure --enable-tests --enable-coverage
-  - cabal v2-build
+  - export PATH=/opt/ghc/bin:$PATH
+  - travis_retry cabal v2-update
 
 script:
+  - cabal v2-configure --enable-tests --enable-coverage
+  - cabal v2-build
   - cabal v2-test
 
 after_script:
-  - git clone --depth 5 https://github.com/8c6794b6/codecov-haskell
-  - (cd codecov-haskell && git checkout y2020 && cabal v2-install)
-  - $HOME/.cabal/bin/codecov-haskell --help
+  # Building and installing codecov-haskell from git HEAD
+  - git clone --depth 3 -b y2020 https://github.com/8c6794b6/codecov-haskell
+  - ( cd codecov-haskell && cabal v2-install )
+  - export PATH=$HOME/.cabal/bin:$PATH
+  - which codecov-haskell
+
+  # Variables for .tix and .mix arguments
+  - VANILLA=$(find ./dist-newstyle -name 'vanilla' | head -1)
+  - PKG=$(echo $VANILLA | cut -d/ -f6)
+  - TIX=$VANILLA/tix/$PKG/$PKG.tix
+  - MIX_DIR=$VANILLA/mix/$PKG
+  - codecov-haskell --tix=$TIX --mix-dir=$MIX_DIR ccovhs-example-test

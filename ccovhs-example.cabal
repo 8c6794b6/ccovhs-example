@@ -13,6 +13,7 @@ library
                        Ccovhs.A
                        Ccovhs.B
                        Ccovhs.C
+                       Ccovhs.D
   build-depends:       base >= 4 && < 5
   default-language:    Haskell2010
 
