@@ -1,0 +1,15 @@
+language: haskell
+ghc: 8.8.2
+cabal: "3.0"
+
+install:
+  - cabal v2-configure --enable-tests --enable-coverage
+  - cabal v2-build
+
+script:
+  - cabal v2-test
+
+after_script:
+  - git clone --depth 5 https://github.com/8c6794b6/codecov-haskell
+  - (cd codecov-haskell && git checkout y2020 && cabal v2-install)
+  - $HOME/.cabal/bin/codecov-haskell --help

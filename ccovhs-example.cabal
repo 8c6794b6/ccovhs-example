@@ -1,0 +1,25 @@
+cabal-version:       2.0
+name:                ccovhs-example
+version:             0.1.0.0
+license-file:        LICENSE
+author:              8c6794b6
+maintainer:          8c6794b6@gmail.com
+build-type:          Simple
+extra-source-files:  README.md
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Ccovhs
+                       Ccovhs.A
+                       Ccovhs.B
+                       Ccovhs.C
+  build-depends:       base >= 4 && < 5
+  default-language:    Haskell2010
+
+test-suite ccovhs-example-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             test.hs
+  build-depends:       base >=4.13 && < 4.14
+                     , ccovhs-example
+  default-language:    Haskell2010
