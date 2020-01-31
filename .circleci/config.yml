@@ -1,0 +1,42 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: fpco/stack-build:lts
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore cached dependencies
+          keys:
+            - ccovhs-example-{{ checksum "ccovhs-example.cabal" }}
+      - run:
+          name: Resolve/update dependencies
+          command: stack setup
+      - run:
+          name: Run tests
+          command: stack build --no-terminal --fast --test --coverage
+      - run:
+          name: Install codecov-haskell
+          command: |
+            git clone --depth 3 https://github.com/8c6794b6/codecov-haskell
+            ( cd codecov-haskell && stack setup && stack install )
+            which codecov-haskell
+      - run:
+          name: Upload coverage
+          command: |
+            HPC_ROOT=$(stack path --local-hpc-root)
+            DIST_DIR=$(stack path --dist-dir)
+            TEST=ccovhs-example-test
+            TIX=$HPC_ROOT/ccovhs-example/$TEST/$TEST.tix
+            MIX_DIR=$DIST_DIR/hpc
+            echo TIX=$TIX
+            echo MIX_DIR=$MIX_DIR
+            stack exec -- codecov-haskell --tix=$TIX \
+              --mix-dir=$MIX_DIR --display-report ccovhs-example-test
+      - save_cache:
+          name: Cache Dependencies
+          key: ccovhs-example-{{ checksum "ccovhs-example.cabal" }}
+          paths:
+            - ".stack-work"
+            - "/root/.stack"
