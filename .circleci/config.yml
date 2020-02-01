@@ -29,7 +29,9 @@ jobs:
             echo TIX=$TIX
             echo MIX_DIR=$MIX_DIR
             stack exec -- codecov-haskell --tix=$TIX \
-              --mix-dir=$MIX_DIR --display-report ccovhs-example-test
+              --mix-dir=$MIX_DIR --display-report --dont-send \
+              ccovhs-example-test > reports
+            bash <(curl -s https://codecov.io/bash) -f reports
       - save_cache:
           name: Cache Dependencies
           key: ccovhs-example-{{ checksum "ccovhs-example.cabal" }}
